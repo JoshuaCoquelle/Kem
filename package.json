@@ -2,11 +2,8 @@
   "name": "kem",
   "version": "1.0.0",
   "description": "Event emitting without dependencies",
-  "main": "index.js",
-  "scripts": {
-    "build": "babel src -d dist",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "main": "src/index.js",
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/JoshuaCoquelle/Kem.git"
