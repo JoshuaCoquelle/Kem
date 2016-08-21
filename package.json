@@ -1,0 +1,29 @@
+{
+  "name": "kem",
+  "version": "1.0.0",
+  "description": "Event emitting without dependencies",
+  "main": "index.js",
+  "scripts": {
+    "build": "babel src -d dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoshuaCoquelle/Kem.git"
+  },
+  "keywords": [
+    "pubsub",
+    "events",
+    "event-emitter"
+  ],
+  "author": "Joshua Coquelle",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JoshuaCoquelle/Kem/issues"
+  },
+  "homepage": "https://github.com/JoshuaCoquelle/Kem#readme",
+  "devDependencies": {
+    "babel": "^6.5.2",
+    "babel-preset-es2015": "^6.13.2"
+  }
+}
