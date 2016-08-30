@@ -5,14 +5,19 @@
 |
 */
 class Kem {
-    
+
     /**
      * Creates an instance of Kem.
-     * 
      */
     constructor() {
         this.events = {};
     }
+
+    /*
+    |---------------------------------------------------------------
+    | Main Kem instance methods to be used by library user. ($)
+    |---------------------------------------------------------------
+    */
 
     /**
      * Creates or attaches a callback function to an existing event.
@@ -22,12 +27,15 @@ class Kem {
      * @returns
      */
     $when(eventName, callback) {
-        if (!this.events[eventName]) this.events[eventName] = [];
+        this.setOrCreateEvent(eventName);
 
-        let event = this.events[eventName];
-        let token = Math.random().toString(16).slice(2);
+        let token = this.generateToken();
 
-        event.push({ token, callback });
+        this.pushToEvent(eventName, {
+            token,
+            callback,
+            callbackName: callback.name
+        });
 
         return token;
     }
@@ -38,15 +46,16 @@ class Kem {
      * @param {String}   eventName :: Name of existing event.
      * @param {Variable} fnVar     :: Variable used to save $when() functon call.
      */
-    $stop(eventName, fnVar) {
-        let events = this.events;
-
-        for (let i = 0; i < events[eventName].length; i++) {
-
-            if (events[eventName][i].token === fnVar) {
-                events[eventName].splice(i, 1);
-            }
+    $stop(eventName, name) {
+        if (!this.eventExists(eventName)) {
+            return;
         }
+
+        let event = this.events[eventName];
+
+        event.forEach(function(key, index) {
+            if (key.token === name) event.splice(index, 1);
+        });
 
         return this;
     }
@@ -59,13 +68,15 @@ class Kem {
      * @returns
      */
     $send(eventName, data) {
-        if (!this.events[eventName]) return;
+        if (!this.eventExists(eventName)) {
+            return;
+        }
 
         let event = this.events[eventName];
-        let actionables = event ? event.length : 0;
+        let props = event ? event.length : 0;
 
-        while (actionables--) {
-            event[actionables].callback(data, eventName);
+        while (props--) {
+            event[props].callback(data, eventName);
         }
 
         return this;
@@ -78,7 +89,9 @@ class Kem {
      * @returns
      */
     $empty(eventName) {
-        this.events[eventName] = [];
+        if (this.eventExists(eventName)) {
+            this.events[eventName] = [];
+        }
 
         return this; 
     }
@@ -86,11 +99,13 @@ class Kem {
     /**
      * Destroy an entire event from the events object.
      *
-     * @param {any} eventName
+     * @param {String} eventName
      * @returns
      */
     $destroy(eventName) {
-        delete this.events[eventName];
+        if (this.eventExists(eventName)) {
+            delete this.events[eventName];
+        }
 
         return this;
     }
@@ -105,4 +120,58 @@ class Kem {
 
         return this;
     }
+
+    /*
+    |---------------------------------------------------------------
+    | Helper utilty methods for inner class use.
+    |---------------------------------------------------------------
+    */
+
+    /**
+     * Determine whether an event exist by key name.
+     * 
+     * @param {String} eventName :: A string containing the name of the event.
+     * @returns
+     */
+    eventExists(eventName) {
+        if (this.events[eventName]) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Initialize a new event as an empty array or add to existing event.
+     * 
+     * @param {String} eventName :: A string containing the name of the event.
+     */
+    setOrCreateEvent(eventName) {
+        this.events[eventName] = this.events[eventName] || [];
+
+        return this;
+    }
+
+    /**
+     * Push a properties object to the specified event.
+     * 
+     * @param {String} eventName :: A string containing the name of the event.
+     * @param {Object} props     :: Push a callback props object to an event.
+     * @returns
+     */
+    pushToEvent(eventName, props) {
+        this.events[eventName].push(props);
+        
+        return this;
+    }
+
+    /**
+     * Generates a 13 character long alpha-numeric string token.
+     * 
+     * @returns
+     */
+    generateToken() {
+        return Math.random().toString(16).slice(2);
+    }
+
 }
