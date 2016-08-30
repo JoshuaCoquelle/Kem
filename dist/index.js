@@ -184,6 +184,15 @@ var Kem = function () {
 
             return this;
         }
+
+        /**
+         * Push a properties object to the specified event.
+         * 
+         * @param {String} eventName :: A string containing the name of the event.
+         * @param {Object} props     :: Push a callback props object to an event.
+         * @returns
+         */
+
     }, {
         key: "pushToEvent",
         value: function pushToEvent(eventName, props) {
