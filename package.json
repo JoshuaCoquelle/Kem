@@ -18,9 +18,5 @@
   "bugs": {
     "url": "https://github.com/JoshuaCoquelle/Kem/issues"
   },
-  "homepage": "https://github.com/JoshuaCoquelle/Kem#readme",
-  "devDependencies": {
-    "babel": "^6.5.2",
-    "babel-preset-es2015": "^6.13.2"
-  }
+  "homepage": "https://github.com/JoshuaCoquelle/Kem#readme"
 }

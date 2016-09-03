@@ -1,15 +1,14 @@
 /*
-|---------------------------------------------
-|    Kem :: Dependency Free Event Emitting
-|---------------------------------------------
-|
+|---------------------------------------------------------------
+|           Kem :: Dependency Free Event Emitting
+|---------------------------------------------------------------
 */
-class Kem {
+var Kem = (function() {
 
     /**
-     * Creates an instance of Kem.
+     * Kem constructor.
      */
-    constructor() {
+    function Kem() {
         this.events = {};
     }
 
@@ -22,65 +21,68 @@ class Kem {
     /**
      * Creates or attaches a callback function to an existing event.
      * 
-     * @param {String}   eventName :: Name of event to create/existing event. 
-     * @param {Function} callback  :: Callback function to attach to event.
+     * @param {String}   eventName | Name of event to create/existing event. 
+     * @param {Function} callback  | Callback function to attach to event.
      * @returns
      */
-    $when(eventName, callback) {
-        this.setOrCreateEvent(eventName);
+    Kem.prototype.$when = function(eventName, callback) {
+        setOrCreateEvent(this, eventName);
 
-        let token = this.generateToken();
+        var token = generateToken();
 
-        this.pushToEvent(eventName, {
-            token,
-            callback,
+        pushToEvent(this, eventName, {
+            token: token,
+            callback: callback,
             callbackName: callback.name
         });
 
         return token;
-    }
-
-    /**
-     * Remove stored callback from the specificed event.
-     *
-     * @param {String}   eventName :: Name of existing event.
-     * @param {Variable} fnVar     :: Variable used to save $when() functon call.
-     */
-    $stop(eventName, name) {
-        if (!this.eventExists(eventName)) {
-            return;
-        }
-
-        let event = this.events[eventName];
-
-        event.forEach(function(key, index) {
-            if (key.token === name) event.splice(index, 1);
-        });
-
-        return this;
-    }
+    };
 
     /**
      * Trigger the specified event and pass along the desired data.
      * 
-     * @param {String} eventName :: Name of existing event.
-     * @param {any}    data      :: Data to be passed to the events callback.
+     * @param {String} eventName | Name of existing event.
+     * @param {any}    data      | Data to be passed to the events callback.
      * @returns
      */
-    $send(eventName, data) {
-        if (!this.eventExists(eventName)) {
+    Kem.prototype.$send = function(eventName, data) {
+        if (!eventExists(this, eventName)) {
             return;
         }
 
-        let event = this.events[eventName];
-        let props = event ? event.length : 0;
+        var event = this.events[eventName];
+        var props = event ? event.length : 0;
 
-        while (props--) {
+        while (props--)
+        {
             event[props].callback(data, eventName);
         }
 
         return this;
-    }
+    };
+
+    /**
+     * Remove stored callback from the specificed event.
+     *
+     * @param {String}   eventName | Name of existing event.
+     * @param {Variable} fnVar     | Variable used to save $when() functon call.
+     */
+    Kem.prototype.$stop = function(eventName, name) {
+        if (!eventExists(this, eventName)) {
+            return;
+        }
+
+        var event = this.events[eventName];
+
+        event.forEach(function(key, index) {
+            if (key.token === name) {
+                event.splice(index, 1);
+            }
+        });
+
+        return this;
+    };
 
     /**
      * Empty all callbacks from the specified event. 
@@ -88,22 +90,22 @@ class Kem {
      * @param {any} eventName
      * @returns
      */
-    $empty(eventName) {
-        if (this.eventExists(eventName)) {
+    Kem.prototype.$empty = function(eventName) {
+        if (eventExists(this, eventName)) {
             this.events[eventName] = [];
         }
 
         return this; 
-    }
-    
+    };
+
     /**
      * Destroy an entire event from the events object.
      *
      * @param {String} eventName
      * @returns
      */
-    $destroy(eventName) {
-        if (this.eventExists(eventName)) {
+    Kem.prototype.$destroy = function(eventName) {
+        if (eventExists(this, eventName)) {
             delete this.events[eventName];
         }
 
@@ -115,11 +117,11 @@ class Kem {
      *
      * @returns
      */
-    $destroyAll() {
+    Kem.prototype.$destroyAll = function() {
         this.events = {};
 
         return this;
-    }
+    };
 
     /*
     |---------------------------------------------------------------
@@ -130,11 +132,11 @@ class Kem {
     /**
      * Determine whether an event exist by key name.
      * 
-     * @param {String} eventName :: A string containing the name of the event.
+     * @param {String} eventName | A string containing the name of the event.
      * @returns
      */
-    eventExists(eventName) {
-        if (this.events[eventName]) {
+    function eventExists(scope, eventName) {
+        if (scope.events[eventName]) {
             return true;
         }
 
@@ -144,25 +146,25 @@ class Kem {
     /**
      * Initialize a new event as an empty array or add to existing event.
      * 
-     * @param {String} eventName :: A string containing the name of the event.
+     * @param {String} eventName | A string containing the name of the event.
      */
-    setOrCreateEvent(eventName) {
-        this.events[eventName] = this.events[eventName] || [];
+    function setOrCreateEvent(scope, eventName) {
+        scope.events[eventName] = scope.events[eventName] || [];
 
-        return this;
+        return scope;
     }
 
     /**
      * Push a properties object to the specified event.
      * 
-     * @param {String} eventName :: A string containing the name of the event.
-     * @param {Object} props     :: Push a callback props object to an event.
+     * @param {String} eventName | A string containing the name of the event.
+     * @param {Object} props     | Push a callback props object to an event.
      * @returns
      */
-    pushToEvent(eventName, props) {
-        this.events[eventName].push(props);
+    function pushToEvent(scope, eventName, props) {
+        scope.events[eventName].push(props);
         
-        return this;
+        return scope;
     }
 
     /**
@@ -170,8 +172,12 @@ class Kem {
      * 
      * @returns
      */
-    generateToken() {
+    function generateToken() {
         return Math.random().toString(16).slice(2);
     }
 
-}
+    /**
+     * Expose the Kem constructor.
+     */
+    return Kem;
+})();
