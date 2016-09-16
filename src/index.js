@@ -54,8 +54,7 @@ var Kem = (function() {
         var event = this.events[eventName];
         var props = event ? event.length : 0;
 
-        while (props--)
-        {
+        while (props--) {
             event[props].callback(data, eventName);
         }
 
@@ -87,7 +86,7 @@ var Kem = (function() {
     /**
      * Empty all callbacks from the specified event. 
      * 
-     * @param {any} eventName
+     * @param {String} eventName
      * @returns
      */
     Kem.prototype.$empty = function(eventName) {
