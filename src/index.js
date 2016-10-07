@@ -33,7 +33,7 @@ var Kem = (function() {
     Kem.prototype.when = function(event, callback) {
         if (functionIsAnonymous(event, callback)) return;
 
-        setOrCreateEventKey(this, event);
+        initializeEmptyEventIfNew(this, event);
 
         this.events[event].push({
             callback: callback,
@@ -55,8 +55,7 @@ var Kem = (function() {
 
             var callbacks = [].concat(eventObj[event]);
 
-            setOrCreateEventKey(this, event);
-
+            initializeEmptyEventIfNew(this, event);
             registerEventCallbacks(this, event, callbacks);
         }
 
@@ -235,13 +234,13 @@ var Kem = (function() {
     }
     
     /**
-     * If the event doesn't exist, create and initalize the value as an empty array.
+     * If the event doesn't exist, create and initialize the value as an empty array.
      * 
      * @param  {Object} scope | The object context to evaluate.
      * @param  {String} event | Name of event to target.
      * @return {Object}       | Returns the current instance scope.
      */
-    function setOrCreateEventKey(scope, event) {
+    function initializeEmptyEventIfNew(scope, event) {
         scope.events[event] = scope.events[event] || [];
 
         return scope;
